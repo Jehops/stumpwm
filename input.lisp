@@ -184,8 +184,8 @@ Available completion styles include
 ;;; keysym functions
 
 (defun is-modifier (keycode)
-  "Return t if keycode is a modifier"
-  (or (find keycode *all-modifiers* :test 'eql)
+  "Return T if KEYCODE is a modifier."
+  (or (member keycode *all-modifiers* :test 'eql)
       ;; Treat No Symbol keys as modifiers (and therefore ignorable)
       (= (xlib:keycode->keysym *display* keycode 0) 0)))
 
@@ -755,17 +755,8 @@ input (pressing Return), nil otherwise."
        nil))))
 
 (defun all-modifier-codes ()
-  (multiple-value-bind
-        (shift-codes lock-codes control-codes mod1-codes mod2-codes mod3-codes mod4-codes mod5-codes)
-      (xlib:modifier-mapping *display*)
-    (append shift-codes
-            lock-codes
-            control-codes
-            mod1-codes
-            mod2-codes
-            mod3-codes
-            mod4-codes
-            mod5-codes)))
+  "Return all the keycodes that are associated with a modifier."
+  (flatten (multiple-value-list (xlib:modifier-mapping *display*))))
 
 (defun get-modifier-map ()
   (labels ((find-mod (mod codes)
